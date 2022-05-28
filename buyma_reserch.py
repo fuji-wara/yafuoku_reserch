@@ -32,8 +32,8 @@ hermes_url = 'https://www.buyma.com/r/_HERMES-エルメス/-A1000026000/'
 brand_url = [vuitton_url, dior_url, fendi_url, chanel_url, diesel_url, gucci_url, celine_url, hermes_url]
 
 
-def main():
-    for i in item_list(dior_url):
+def main(url):
+    for i in item_list(url):
         item_dict = item_data(i)
         collection1.insert_one(item_dict)
         print(item_dict)
@@ -48,7 +48,7 @@ def item_list(url):
     soup = BeautifulSoup(html.text, 'lxml')
     num = 0
     for i in soup.select('li.product '):
-        if num <= 29:
+        if num <= 19:
             item = i.select_one('div.product_Action').get('item-url')
             item_url = f'{base_url}{item}'
             yield item_url
@@ -130,7 +130,7 @@ def item_data(url):
 def hp(item_num, brand_name):
     vuitton = 'LouisVuitton(ルイヴィトン)'
     dior = 'Dior(ディオール)'
-    fendi = ''
+    fendi = 'FENDI(フェンディ)'
     chanel = ''
     diesel = ''
     gucci = ''
@@ -154,7 +154,13 @@ def hp(item_num, brand_name):
             return item_stocking
 
     elif brand_name == fendi:
-        pass
+        if item_num != 'なし':
+            item_stocking = fendi_sc(item_num)
+            return item_stocking
+        else:
+            item_stocking = item_num
+            return item_stocking
+
     elif brand_name == chanel:
         pass
     elif brand_name == diesel:
@@ -213,114 +219,53 @@ def dior_sc(item_num):
 
 
 
-def fendi(item_num):
-    url = f'https://jp.louisvuitton.com/jpn-jp/search/{item_num}'
+def fendi_sc(item_num):
+    """
+    """
+    z = item_num
+    url = f'https://www.fendi.com/jp-ja/search?q={z}&lang=ja_JP'
     driver.get(url)
-    time.sleep(5)
+    time.sleep(10)
     html = driver.page_source.encode('utf-8')
+    time.sleep(1)
     soup = BeautifulSoup(html, 'lxml')
+
     try:
-        item_stocking = soup.select_one('span.notranslate').text
-        print(item_stocking)
+        item_stocking = soup.select_one('div.price > span > span').text
+        return item_stocking
+    
     except:
+        a = soup.select_one('span.h3.d-block.mb-6').text
+        print(a)
         item_stocking = 'なし'
-        print(item_stocking)
-
-    driver.quit()
-
-    return item_stocking
+        return item_stocking
 
 
-def chanel(item_num):
-    url = f'https://jp.louisvuitton.com/jpn-jp/search/{item_num}'
-    driver.get(url)
-    time.sleep(5)
-    html = driver.page_source.encode('utf-8')
-    soup = BeautifulSoup(html, 'lxml')
-    try:
-        time.sleep(3)
-        item_stocking = soup.select_one('span.notranslate').text
-        print(item_stocking)
-    except:
-        time.sleep(3)
-        item_stocking = 'なし'
-        print(item_stocking)
 
-    driver.quit()
-
-    return item_stocking
+def chanel_sc(item_num):
+    """
+    """
 
 
-def diesel(item_num):
-    url = f'https://jp.louisvuitton.com/jpn-jp/search/{item_num}'
-    driver.get(url)
-    time.sleep(5)
-    html = driver.page_source.encode('utf-8')
-    soup = BeautifulSoup(html, 'lxml')
-    try:
-        item_stocking = soup.select_one('span.notranslate').text
-        print(item_stocking)
-    except:
-        item_stocking = 'なし'
-        print(item_stocking)
-
-    driver.quit()
-
-    return item_stocking
+def diesel_sc(item_num):
+    """
+    """
 
 
-def gucci(item_num):
-    url = f'https://jp.louisvuitton.com/jpn-jp/search/{item_num}'
-    driver.get(url)
-    time.sleep(5)
-    html = driver.page_source.encode('utf-8')
-    soup = BeautifulSoup(html, 'lxml')
-    try:
-        item_stocking = soup.select_one('span.notranslate').text
-        print(item_stocking)
-    except:
-        item_stocking = 'なし'
-        print(item_stocking)
 
-    driver.quit()
+def gucci_sc(item_num):
+    """
+    """
 
-    return item_stocking
+def celine_sc(item_num):
+    """
+    """
 
 
-def celine(item_num):
-    url = f'https://jp.louisvuitton.com/jpn-jp/search/{item_num}'
-    driver.get(url)
-    time.sleep(5)
-    html = driver.page_source.encode('utf-8')
-    soup = BeautifulSoup(html, 'lxml')
-    try:
-        item_stocking = soup.select_one('span.notranslate').text
-        print(item_stocking)
-    except:
-        item_stocking = 'なし'
-        print(item_stocking)
+def hermes_sc(item_num):
+    """
+    """
 
-    driver.quit()
-
-    return item_stocking
-
-
-def hermes(item_num):
-    url = f'https://jp.louisvuitton.com/jpn-jp/search/{item_num}'
-    driver.get(url)
-    time.sleep(5)
-    html = driver.page_source.encode('utf-8')
-    soup = BeautifulSoup(html, 'lxml')
-    try:
-        item_stocking = soup.select_one('span.notranslate').text
-        print(item_stocking)
-    except:
-        item_stocking = 'なし'
-        print(item_stocking)
-
-    driver.quit()
-
-    return item_stocking
 
 
 def search_confirmation(a):
@@ -338,4 +283,4 @@ def search_confirmation(a):
 #item_data('https://www.buyma.com/item/82722679/')
 #item_data('https://www.buyma.com/item/81501726/')
 
-main()
+main(fendi_url)
