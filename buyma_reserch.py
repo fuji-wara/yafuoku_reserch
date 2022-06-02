@@ -131,7 +131,7 @@ def hp(item_num, brand_name):
     vuitton = 'LouisVuitton(ルイヴィトン)'
     dior = 'Dior(ディオール)'
     fendi = 'FENDI(フェンディ)'
-    chanel = ''
+    chanel = 'CHANEL(シャネル)'
     diesel = ''
     gucci = ''
     celine = ''
@@ -162,7 +162,13 @@ def hp(item_num, brand_name):
             return item_stocking
 
     elif brand_name == chanel:
-        pass
+        if item_num != 'なし':
+            item_stocking = chanel_sc(item_num)
+            return item_stocking
+        else:
+            item_stocking = item_num
+            return item_stocking
+
     elif brand_name == diesel:
         pass
     elif brand_name == gucci:
@@ -245,6 +251,32 @@ def fendi_sc(item_num):
 def chanel_sc(item_num):
     """
     """
+    url = 'https://www.chanel.com/jp/'
+
+    driver.get(url)
+    time.sleep(10)
+    driver.find_element_by_css_selector('li.is-hidden-s').click()
+    time.sleep(10)
+    driver.find_element_by_css_selector("#searchInput").send_keys(item_num.replace(' ',""))
+    driver.find_element_by_css_selector("button.button.search__button.search__submit.js-search-submit").click()
+    time.sleep(5)
+  
+    html = driver.page_source.encode('utf-8')
+    time.sleep(1)
+    soup = BeautifulSoup(html, 'lxml')
+
+    try:
+        a = soup.select_one('p.product-details__price').text
+
+        v = a.replace(' ',"")
+        q = v.replace('*', "")
+        item_stocking = q.replace('\n',"")
+
+        return item_stocking
+
+    except:
+        item_stocking = 'なし'
+        return item_stocking
 
 
 def diesel_sc(item_num):
@@ -283,4 +315,4 @@ def search_confirmation(a):
 #item_data('https://www.buyma.com/item/82722679/')
 #item_data('https://www.buyma.com/item/81501726/')
 
-main(fendi_url)
+main(chanel_url)
